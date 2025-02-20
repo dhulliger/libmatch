@@ -11,11 +11,12 @@ RUN bash -c "echo source /home/angr/venv/bin/activate >> ~/.bashrc"
 
 RUN git clone https://github.com/dhulliger/autoblob /home/angr/angr-dev/autoblob
 RUN bash -c "source /home/angr/venv/bin/activate && cd /home/angr/angr-dev/autoblob && pip install -e ."
+RUN bash -c "source /home/angr/venv/bin/activate && pip install angr"
 
 COPY --chown=angr . /home/angr/angr-dev/libmatch
 RUN bash -c "source /home/angr/venv/bin/activate && cd /home/angr/angr-dev/libmatch && pip install -e ."
 
-RUN bash -c "source /home/angr/venv/bin/activate && pip install angr"
+
 
 
 WORKDIR /home/angr/angr-dev/libmatch

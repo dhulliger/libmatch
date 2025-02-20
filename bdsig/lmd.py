@@ -256,7 +256,8 @@ class LibMatchDescriptor(object):
         for faddr in self.cfg.kb.functions:
             f = self.cfg.kb.functions.function(faddr)
             f._project = None
-            f._block_cache = {}
+            if hasattr(f, '_block_cache'):
+                f._block_cache = {}
 
         self.function_manager = self.cfg.kb.functions.copy()
         self.function_manager._kb = None

@@ -9,6 +9,7 @@ import logging
 import autoblob
 import angr
 import os
+import struct
 
 log = logging.getLogger('unblob')
 
@@ -76,10 +77,10 @@ def load_it(opts):
         # Are we doing this manually?
         if opts.base_address and opts.entry_point and opts.arch:
             p = angr.Project(opts.infile,
-                             main_opts={'base_addr': opts.base,
+                             main_opts={'base_addr': opts.base_address,
                                         'arch': opts.arch,
                                         'backend': 'blob',
-                                        'entry_point': opts.entry,
+                                        'entry_point': opts.entry_point,
                                         'force_rebase': True})
         else:
             # Pray.
@@ -107,13 +108,14 @@ def do_normal(opts):
         # We have some work to do....
         if opts.cortex:
             # Cortex mode
-            # Assume Arch=ARMEL
-            opts.arch = 'ARMEL'
+            # Assume Arch=ARMCortexM
+            #opts.arch = 'ARMEL'
+            opts.arch = 'ARMCortexM'
             opts.base_address, opts.entry_point = quick_cortex_parser(opts.infile)
     project = load_it(opts)
     if not project:
         log.critical("Load failed!")
-        sys.exit(1)
+        exit(1)
     opts.arch = project.arch
     opts.base_address = project.loader.main_object.min_addr
     opts.entry_point = project.entry
@@ -144,7 +146,7 @@ def do_build(opts):
     libs_dir = opts.infile
     if not os.path.isdir(libs_dir):
         print("%s is not a directory" % libs_dir)
-        sys.exit(1)
+        exit(1)
     LibMatchDatabase.build(libs_dir, opts.outfile)
 
 def stfu(thing):

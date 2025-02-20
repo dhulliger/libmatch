@@ -31,6 +31,48 @@ You'll also need autoblob, a CLE Loader that I wrote which helps with some binar
 
 ## Usage
 
+### unblob help
+```
+usage: unblob [-h] [--debug] [-U | -X | -B] [--base-address BASE_ADDRESS] [--entry-point ENTRY_POINT]
+              [--arch ARCH] [--cortex] [-S] [-F FUDGE_FACTOR] [-L LMDB] [-1] [-2] [-3] [--scoring] [-E] [-Y]
+              infile outfile
+
+positional arguments:
+  infile
+  outfile
+
+options:
+  -h, --help            show this help message and exit
+  --debug
+  -U                    Unblobulate!
+  -X                    Extract
+  -B                    Build library signatures (provide input directory and output LMDB filename)
+
+Input options:
+  --base-address BASE_ADDRESS
+                        Manually specify the base address of the binary
+  --entry-point ENTRY_POINT
+                        Manually specify the entry point of the binary
+  --arch ARCH           Manually specify the architecture to use
+  --cortex              Fast Cortex-M loading mode
+
+Symbol Recovery Options:
+  -S, --disable-symbol-recovery
+                        Enable symbol recovery
+  -F FUDGE_FACTOR, --fudge-factor FUDGE_FACTOR
+                        Lowest similarity score to consider a 'match' for symbol recovery
+  -L LMDB, --lmdb LMDB  LMDB file to use for symbol recovery
+  -1, --first-order     Only use the first-order metric to gather symbols
+  -2, --second-order    Only use the third-order metric to gather symbols
+  -3, --third-order     Only use the third-order metric to gather symbols
+  --scoring             Enable scoring mode, use a binary with symbols to score symbol recovery accuracy
+
+Output Options:
+  -E, --elf             Produce an ELF (Default)
+  -Y, --yaml            Produce a YAML file
+
+```
+
 Once you have an angr environment, you can use the ./utils/unblob tool to build some databases.  Put all your objects in a folder structure like:
 ```
 ./objects/my_hal/library1/obj1.o
@@ -72,17 +114,24 @@ Some of these databases get rather big -- this is something we'd like to optimiz
 Here's one, start-to-finish:
 
 ```
-./utils/unblob -B ./objects/arm-none-eabi ./objects/arm-none-eabi.lmdb
+./utils/unblob -B ./objects/arm-none-eabi ./arm-none-abi.lmdb
 ```
 
 .... wait some time....
 
 This will build an LMDB of the STM32 HAL, mbed, and some other assorted stuff.
 
-You can give it a try on our test binary.  This will run in scoring mode (used for metrics gathering).  It will first output "naive" results (without context), and ask you to hit Enter, followed by the final resutls.  We use an ELF here for ground-truth, but of course you can use this on the blob version of the same file too!
+You can give it a try on our test binary (.bin plain firmware version)
 
 ```
-./utils/unblob -U --scoring -L ./objects/arm-none-eabi.lmdb -Y ./bins/Nucleo_i2c_master.elf ./bins/Nucleo_i2c_master_addrs.yml
+./utils/unblob -U -L ./arm-none-eabi.lmdb -Y --cortex ./bins/Nucleo_i2c_master_m3.bin ./Nucleo_i2c_master_m3.yml
+```
+
+
+You can also give it a try on our test binary (elf version). This will run in scoring mode (used for metrics gathering).  It will first output "naive" results (without context), and ask you to hit Enter, followed by the final resutls.  We use an ELF here for ground-truth, but of course you can use this on the blob version of the same file too!
+
+```
+./utils/unblob -U --scoring -L ./arm-none-eabi.lmdb -Y ./bins/Nucleo_i2c_master.elf ./Nucleo_i2c_master_m3.yml
 ```
 
 ## TODOs and future work
