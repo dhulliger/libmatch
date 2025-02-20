@@ -114,7 +114,7 @@ Some of these databases get rather big -- this is something we'd like to optimiz
 Here's one, start-to-finish:
 
 ```
-./utils/unblob -B ./objects/arm-none-eabi ./arm-none-abi.lmdb
+./utils/unblob -B ./objects/arm-none-eabi ./arm-none-eabi.lmdb
 ```
 
 .... wait some time....
