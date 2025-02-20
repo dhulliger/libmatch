@@ -126,7 +126,7 @@ class LibMatchDatabase(object):
         return lmds
 
     @staticmethod
-    def build(root_dir):
+    def build(root_dir, dbfile=None):
         """
         Constructor to build the database, from a directory tree
 
@@ -146,8 +146,10 @@ class LibMatchDatabase(object):
         l.info("Making LMDB")
         lmdb = LibMatchDatabase(lmds)
         directory = os.path.dirname(os.path.abspath(root_dir))
-        filename = os.path.basename(os.path.abspath(root_dir)) + ".lmdb"
-        lmdb.dump_path(os.path.join(directory, filename))
+
+        if dbfile == None:
+            dbfile = os.path.join(directory, os.path.basename(os.path.abspath(root_dir)) + ".lmdb")
+        lmdb.dump_path(dbfile)
         l.info("Done")
 
     def _build_sym_list(self, lmds):
