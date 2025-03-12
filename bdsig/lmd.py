@@ -207,6 +207,10 @@ class CleBackendHusk(object):
         """
         Returns the segment that contains `addr`, or ``None``.
         """
+        # no clue why, but sometimes we get a float. this leads to a 
+        # exception later in cle
+        if not isinstance(addr, int):
+            return None
         return self.segments.find_region_containing(addr)
 
     def find_section_containing(self, addr):
